@@ -21,7 +21,7 @@
 @media (max-width: 767px) {
     .cnt-scrollable {
         overflow-y: scroll;
-        height: 200px;
+        height: 120px;
         overflow: auto;
     }
 }
