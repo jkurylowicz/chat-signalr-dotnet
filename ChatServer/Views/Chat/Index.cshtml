@@ -1,0 +1,84 @@
+﻿@model ChatServer.Models.ChatModel
+@{
+    ViewBag.Title = "Chat";
+}
+
+<div id="chatcontainer" class="col-md-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Users:</h4>
+            <div id="users-container" class="cnt-scrollable">
+                <ul id="users" class="ul-list">
+                    @foreach (var user in Model.Users)
+                    {
+                        <li>@user</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <h4>Messages:</h4>
+            <div id="msg-container" class="cnt-scrollable">
+                <ul id="messages" class="ul-list">
+                    @foreach (var msg in Model.Messages)
+                    {
+                        <li>(@msg.Timestamp) <b>@msg.Author</b>: @msg.Message</li>
+                    }
+                </ul>
+            </div>
+
+            
+            @using (Html.BeginForm("Send", "Chat", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "chat" }))
+            {
+                <div id="msg-send" class="input-group">
+                    <input type="text" name="msg" id="message" class="form-control" placeholder="Type a message..." autofocus />
+                    <span class="input-group-btn">
+                        <input type="submit" value="Send" id="sendButton" class="btn btn-primary" />
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/Scripts/jquery.signalR-2.2.0.js")
+    @Scripts.Render("~/signalr/hubs")
+    <script type="text/javascript">
+        $('#msg-container').animate({ scrollTop: $('#msg-container')[0].scrollHeight }, 500);
+
+        $.connection.hub.logging = true;
+
+        $.connection.chatHub.client.receiveMessage = function (msg) {
+            $("#messages").append("<li>(" + msg.Timestamp + ") <b>" + msg.Author + "</b>: " + msg.Message + "</li>");
+        }
+
+        $.connection.chatHub.client.updateUsers = function (users) {
+            $("#users").html('');
+            $.each(users, function (index, value) {
+                $('#users').append('<li>' + value + '</li>');
+            })
+        }
+
+        $.connection.hub.start().done(function () { });
+
+        $("#chat").submit(function (event) {
+            // broadcast message
+            var message = $("#message").val();
+            if (message) {
+                $.connection.chatHub.server.send(message);
+
+                // scroll down in message container
+                $('#msg-container').animate({
+                    scrollTop: $('#msg-container')[0].scrollHeight
+                }, 1000);
+
+                // reset message
+                $("#message").val("");
+            }
+            
+            // prevent from default form submission
+            event.preventDefault();
+        });
+    </script>
+}

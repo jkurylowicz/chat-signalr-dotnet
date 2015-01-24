@@ -1,0 +1,41 @@
+﻿.col-md-12 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.col-sm-3, .col-sm-9 {
+    margin-top: 5px;
+}
+
+.row {
+    width: 100%;
+}
+
+.cnt-scrollable {
+    border: solid 1px;
+    overflow-y: scroll;
+    height: 400px;
+    overflow: auto;
+}
+
+@media (max-width: 767px) {
+    .cnt-scrollable {
+        overflow-y: scroll;
+        height: 200px;
+        overflow: auto;
+    }
+}
+
+.ul-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+input {
+    max-width: 100%;
+}
+
+.input-group {
+    margin-top: 5px;
+}
